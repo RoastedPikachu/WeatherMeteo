@@ -114,6 +114,7 @@ export default {
         path: '',
         time: 0,
       }],
+      months: ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'],
       name: 'Москва',
       path: '',
       weather: 0,
@@ -168,35 +169,10 @@ export default {
       } else {
 
         this.day = date.getDate();
-        this.currentMonth = date.getMonth();
+        let month = date.getMonth();
         this.currentTime = this.time;
 
-        switch(this.currentMonth){
-          case 0: this.currentMonth = 'января';
-          break;
-          case 1: this.currentMonth = 'февраля';
-          break;
-          case 2: this.currentMonth = 'марта';
-          break;
-          case 3: this.currentMonth = 'апреля';
-          break;
-          case 4: this.currentMonth = 'мая';
-          break;
-          case 5: this.currentMonth = 'июня';
-          break;
-          case 6: this.currentMonth = 'июля';
-          break;
-          case 7: this.currentMonth = 'августа';
-          break;
-          case 8: this.currentMonth = 'сентября';
-          break;
-          case 9: this.currentMonth = 'октября';
-          break;
-          case 10: this.currentMonth = 'ноября';
-          break;
-          case 11: this.currentMonth = 'декабря';
-          break;
-        }
+        this.currentMonth = this.months[month];
       }
     }, 
     currentWeather: function(){
