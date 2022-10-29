@@ -283,7 +283,7 @@ export default {
                 case 'дождь': this.path = require('@/assets/free-icon-rainy-1163626.png');
                 break;
                 case 'мгла': 
-                case 'туман': 
+                case 'туман':  
                 case 'дымка':
                 case 'плотный туман':
                 this.path = require('@/assets/free-icon-foog-1163640.png');
@@ -364,6 +364,15 @@ export default {
 <style lang="scss">
   @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap');
 
+  // variables 
+
+  $font-size-h3: 26px;
+  $font-size-p: 18px;
+  $font-size-mainInfo-p: 20px;
+  $bg-color: white;
+
+  // styles
+
   * {
     margin: 0;
     padding: 0;
@@ -387,8 +396,7 @@ export default {
       font-family: 'Mono Sans', sans-serif;
       h3 {
         height: 7.5%;
-        color: black;
-        font-size: 26px;
+        font-size: $font-size-h3;
       }
       #weatherBlockInfo {
         display: flex;
@@ -410,7 +418,7 @@ export default {
           width: 90%;
           height: 30%;
           border-radius: 10px;
-          background-color: white;
+          background-color: $bg-color;
           font-size: 22px;
           img {
             margin: 3.5%;
@@ -429,7 +437,7 @@ export default {
             p:nth-child(2) {
               width: 100%;
               margin-top: 15px;
-              font-size: 18px;
+              font-size: $font-size-p;
             }
             p:nth-child(3) {
               margin-top: 20px;
@@ -438,12 +446,12 @@ export default {
             p:nth-child(4) {
               margin-top: 30px;
               margin-left: 5px;
-              font-size: 20px;
+              font-size: $font-size-mainInfo-p;
             }
             p:nth-child(5) {
               margin-top: 30px;
               margin-left: 20px;
-              font-size: 20px;
+              font-size: $font-size-mainInfo-p;
             }
           }
         }
@@ -459,7 +467,7 @@ export default {
             width: 47.5%;
             height: 45%;
             border-radius: 10px;
-            background-color: white;
+            background-color: $bg-color;
           }
           #weatherBlockInfoWind {
             align-items: center;
@@ -478,7 +486,7 @@ export default {
               p {
                 margin-left: 5%;
                 width: 75%;
-                font-size: 18px;
+                font-size: $font-size-p;
               }
             }
           }
@@ -515,7 +523,7 @@ export default {
                 background-image: cover;
               }
               p {
-                font-size: 18px;
+                font-size: $font-size-p;
               }
             }
           }
@@ -536,7 +544,7 @@ export default {
               }
               p {
                 line-height: 25px;
-                font-size: 18px;
+                font-size: $font-size-p;
               }
             }
           }
@@ -556,8 +564,7 @@ export default {
       font-family: 'Mono Sans', sans-serif;
       h3 {
         height: 7.5%;
-        color: black;
-        font-size: 26px;
+        font-size: $font-size-h3;
       }
       div {
         width: 100%;
@@ -574,7 +581,7 @@ export default {
             margin-top: 20px;
             height: 115px;
             border-radius: 5px;
-            background-color: white;
+            background-color: $bg-color;
             img {
               margin-top: 15px;
               margin-left: 10px;
@@ -587,7 +594,7 @@ export default {
               flex-wrap: wrap;
               margin-top: 15px;
               margin-left: 20px;
-              font-size: 18px;
+              font-size: $font-size-p;
               p:nth-child(2) {
                 width: 270px;
                 margin-top: 5px;
@@ -643,11 +650,11 @@ export default {
               }
               p:nth-child(1){
                 margin-top: -10px;
-                font-size: 20px;
+                font-size: $font-size-mainInfo-p;
               }
               p:nth-child(2){
                 margin-top: 10px;
-                font-size: 20px;
+                font-size: $font-size-mainInfo-p;
               }
               p:nth-child(3){
                 margin-top: 10px;
@@ -655,14 +662,14 @@ export default {
               }
               p:nth-child(4){
                 margin-top: 16px;
-                font-size: 18px;
+                font-size: $font-size-p;
               }
               p:nth-child(5){
                 margin-top: 10px;
                 margin-bottom: 20px;
                 margin-left: 0px;
                 width: 100%;
-                font-size: 18px;
+                font-size: $font-size-p;
               }
             }
           }
