@@ -225,6 +225,10 @@ export default {
                   case 'плотный туман':
                   item.path = require('@/assets/free-icon-foog-1163640.png');
                   break;
+                  case 'снег':
+                  case 'небольшой снег':
+                  item.path = require('@/assets/free-icon-snowy-1163629.png');
+                  break;
                 }
                 item.weather = `${Math.round(result.main.temp)}`;
                 item.weatherCond = result.weather[0].description[0].toUpperCase() + result.weather[0].description.slice(1);
@@ -287,6 +291,10 @@ export default {
                 case 'дымка':
                 case 'плотный туман':
                 this.path = require('@/assets/free-icon-foog-1163640.png');
+                break;
+                case 'снег':
+                case 'небольшой снег':
+                this.path = require('@/assets/free-icon-snowy-1163629.png');
                 break;
               }
               if (result.wind.deg >= 350 && result.wind.deg <= 10){
