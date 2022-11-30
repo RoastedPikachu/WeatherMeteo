@@ -1,8 +1,10 @@
 <template>
   <HeaderComp @search="whatCity"/>
+
   <section>
     <div id="weatherBlock">
       <h3>Погода в вашем городе:</h3>
+
       <div id="weatherBlockInfo">
         <div id="weatherBlockMainInfo">
           <img :src="path">
@@ -14,6 +16,7 @@
             <p>{{ weatherCond }}</p>
           </span> 
         </div>
+
         <div id="weatherBlockInfo-other">
           <div id="weatherBlockInfoWind" class="weatherB">
             <span>
@@ -22,9 +25,10 @@
             </span>
             <span>
               <img src="@/assets/free-icon-windy-1163672.png">
-              <p>Скорость ветра {{ weatherSpeed }}км/ч</p>
+              <p>Скорость ветра {{ weatherSpeed }}м/с</p>
             </span>
           </div>
+
           <div id="weatherBlockInfoSun" class="weatherB">
             <div>
               <img src="@/assets/free-icon-sunrise-1163663.png" alt="Рассвет" title="Рассвет">
@@ -35,6 +39,7 @@
               <p>Закат в {{ sunsetTime }}</p>
             </div>
           </div>
+
           <div id="weatherBlockInfoAir" class="weatherB">
             <span>
               <img src="@/assets/free-icon-humidity-1163648.png">
@@ -42,9 +47,10 @@
             </span>
             <span>
               <img src="@/assets/free-icon-warm-1163666.png">
-              <p>Давление {{ pressure - 250 }}мм рт. ст.</p>
+              <p>Давление {{ pressure - 275 }}мм рт. ст.</p>
             </span>
           </div>
+
           <div id="weatherBlockInfoTemp" class="weatherB">
             <span>
               <img src="@/assets/free-icon-warm-1163667.png">
@@ -55,9 +61,11 @@
               <p>Минимальная температура {{ weatherMin }}&#176;</p>
             </span>
           </div>
+
         </div>
       </div>
     </div>
+
     <div id="otherCities">
       <h3>Погода в других городах:</h3>
       <div>
@@ -75,6 +83,7 @@
       </div>
     </div>
   </section>
+
   <FooterComp/>
 </template>
 
@@ -733,6 +742,10 @@ export default {
         }
       }
     }
+  }
+
+  @media (min-width: 1800px) {
+    
   }
 
 </style>
