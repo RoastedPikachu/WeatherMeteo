@@ -10,7 +10,7 @@
           <img :src="path">
           <span>
             <p>{{ name }}</p>
-            <p>Сейчас {{ day }} {{ currentMonth }}, {{ currentTime }}</p>
+            <p>Сейчас {{ day }} {{ currentMonth }}, {{ time }}</p>
             <p>{{ weather }}&#176;</p>
             <p>Ощущается как {{ realWeather }}&#176;</p>
             <p>{{ weatherCond }}</p>
@@ -20,44 +20,44 @@
         <div id="weatherBlockInfo-other">
           <div id="weatherBlockInfoWind" class="weatherB">
             <span>
-              <img src="@/assets/free-icon-compass-1163637.png">
+              <img src="@/assets/free-icon-compass-1163637.png" alt="Направление ветра">
               <p>Направление ветра: {{ weatherRoute }}</p>
             </span>
             <span>
-              <img src="@/assets/free-icon-windy-1163672.png">
+              <img src="@/assets/free-icon-windy-1163672.png" alt="Скорость ветра">
               <p>Скорость ветра {{ weatherSpeed }}м/с</p>
             </span>
           </div>
 
           <div id="weatherBlockInfoSun" class="weatherB">
             <div>
-              <img src="@/assets/free-icon-sunrise-1163663.png" alt="Рассвет" title="Рассвет">
+              <img src="@/assets/free-icon-sunrise-1163663.png" alt="Время рассвета">
               <p>Рассвет в {{ sunriseTime }}</p>
             </div>
             <div>
-              <img src="@/assets/free-icon-sunset-1163664.png" alt="Закат" title="Закат">
+              <img src="@/assets/free-icon-sunset-1163664.png" alt="Время заката">
               <p>Закат в {{ sunsetTime }}</p>
             </div>
           </div>
 
           <div id="weatherBlockInfoAir" class="weatherB">
             <span>
-              <img src="@/assets/free-icon-humidity-1163648.png">
+              <img src="@/assets/free-icon-humidity-1163648.png" alt="Влажность воздуха">
               <p>Влажность воздуха {{ humidity }}%</p>
             </span>
             <span>
-              <img src="@/assets/free-icon-warm-1163666.png">
+              <img src="@/assets/free-icon-warm-1163666.png" alt="Атмосферное давление">
               <p>Давление {{ pressure - 275 }}мм рт. ст.</p>
             </span>
           </div>
 
           <div id="weatherBlockInfoTemp" class="weatherB">
             <span>
-              <img src="@/assets/free-icon-warm-1163667.png">
+              <img src="@/assets/free-icon-warm-1163667.png" alt="Максимальная температура">
               <p>Максимальная температура {{ weatherMax }}&#176;</p>
             </span>
             <span>
-              <img src="@/assets/free-icon-cold-1163665.png">
+              <img src="@/assets/free-icon-cold-1163665.png" alt="Минимальная температура">
               <p>Минимальная температура {{ weatherMin }}&#176;</p>
             </span>
           </div>
@@ -74,7 +74,7 @@
             <img :src="item.path">
             <span>
               <p>{{ item.name }}</p>
-              <p>Сейчас {{ day }} {{ currentMonth }}, {{ currentTime }}</p> 
+              <p>Сейчас {{ item.time.toString().slice(9, 10) }} {{ currentMonth }}, {{ item.time.toString().slice(16, 21) }}</p> 
               <p>{{ item.weather }}&#176;</p>
               <p>{{ item.weatherCond }}</p>
             </span>
@@ -136,13 +136,16 @@ export default {
       humidity: 0,
       pressure: 0,
       time: 0,
+      tokyoTime: 0,
+      budapestTime: 0,
+      newYorkTime: 0,
+      londonTime: 0,
       sunrise: 0,
       sunriseTime: 0,
       sunset: 0,
       sunsetTime: 0,
       day: 0,
       currentMonth: 0,
-      currentTime: 0,
     }
   },    
   methods: {
@@ -151,35 +154,33 @@ export default {
       this.getMainWeather();
     },
     dateText: function(date){
-      if (date.getMinutes() < 10 && !(date.getHours() < 10)) {
 
-        this.time = `${date.getHours()}:0${date.getMinutes()}`;
-
-      } else if (date.getHours() < 10 && !(date.getMinutes() < 10)) {
-  
-        this.time = `0${date.getHours()}:${date.getMinutes()}`;
-
-      } else if (date.getMinutes() < 10 && date.getHours() < 10) {
-
-        this.time = `0${date.getHours()}:0${date.getMinutes()}`;
-
-      } else {
-
-        this.time = `${date.getHours()}:${date.getMinutes()}`;
-      } 
       if (date == this.sunset){
 
-        this.sunsetTime = this.time;
+        this.sunsetTime = date.toString().slice(16, 21);
         
-      } else if (date == this.sunrise){
-
-        this.sunriseTime = this.time;
+      } else if (date == this.sunrise){ 
+        
+        this.sunriseTime = date.toString().slice(16, 21);
 
       } else {
 
         this.day = date.getDate();
         let month = date.getMonth();
-        this.currentTime = this.time;
+        this.time = date.toString().slice(16, 21);
+
+        this.otherCities.forEach((item, i) => {
+          switch(i) {
+            case 0: item.time = new Date(date.getFullYear(), date.getMonth(), date.getDate(), (date.getHours() - 3), date.getMinutes());
+            break; 
+            case 1: item.time = new Date(date.getFullYear(), date.getMonth(), date.getDate(), (date.getHours() - 8), date.getMinutes());
+            break;
+            case 2: item.time = new Date(date.getFullYear(), date.getMonth(), date.getDate(), (date.getHours() + 6), date.getMinutes());
+            break;
+            case 3: item.time = new Date(date.getFullYear(), date.getMonth(), date.getDate(), (date.getHours() - 2), date.getMinutes());
+            break;
+          }
+        });
 
         this.currentMonth = this.months[month];
       }
