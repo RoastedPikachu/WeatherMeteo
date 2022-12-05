@@ -10,7 +10,7 @@
           <img :src="path">
           <span>
             <p>{{ name }}</p>
-            <p>Сейчас {{ day }} {{ currentMonth }}, {{ time }}</p>
+            <p>Сейчас {{ day }} {{ month }}, {{ time }}</p>
             <p>{{ weather }}&#176;</p>
             <p>Ощущается как {{ realWeather }}&#176;</p>
             <p>{{ weatherCond }}</p>
@@ -74,7 +74,7 @@
             <img :src="item.path">
             <span>
               <p>{{ item.name }}</p>
-              <p>Сейчас {{ item.time.toString().slice(9, 10) }} {{ currentMonth }}, {{ item.time.toString().slice(16, 21) }}</p> 
+              <p>Сейчас {{ item.date.toString().slice(9, 10) }} {{ item.month }}, {{ item.date.toString().slice(16, 21) }}</p> 
               <p>{{ item.weather }}&#176;</p>
               <p>{{ item.weatherCond }}</p>
             </span>
@@ -100,28 +100,32 @@ export default {
         weather: '', 
         weatherCond: '', 
         path: '',
-        time: 0,
+        date: 0,
+        month: '',
       }, 
       {
         name: 'Нью-Йорк', 
         weather: '', 
         weatherCond: '', 
         path: '',
-        time: 0,
+        date: 0,
+        month: '',
       }, 
       {
         name: 'Токио',
         weather: '', 
         weatherCond: '', 
         path: '',
-        time: 0,
+        date: 0,
+        month: '',
       }, 
       {
         name: 'Будапешт', 
         weather: '', 
         weatherCond: '', 
         path: '',
-        time: 0,
+        date: 0,
+        month: '',
       }],
       months: ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'],
       name: 'Москва',
@@ -136,16 +140,12 @@ export default {
       humidity: 0,
       pressure: 0,
       time: 0,
-      tokyoTime: 0,
-      budapestTime: 0,
-      newYorkTime: 0,
-      londonTime: 0,
       sunrise: 0,
       sunriseTime: 0,
       sunset: 0,
       sunsetTime: 0,
       day: 0,
-      currentMonth: 0,
+      month: 0,
     }
   },    
   methods: {
@@ -153,7 +153,7 @@ export default {
       this.name = city;
       this.getMainWeather();
     },
-    dateText: function(date){
+    getDateText: function(date){
 
       if (date == this.sunset){
 
@@ -166,26 +166,29 @@ export default {
       } else {
 
         this.day = date.getDate();
-        let month = date.getMonth();
+        this.month = this.months[date.getMonth()];
         this.time = date.toString().slice(16, 21);
 
         this.otherCities.forEach((item, i) => {
           switch(i) {
-            case 0: item.time = new Date(date.getFullYear(), date.getMonth(), date.getDate(), (date.getHours() - 3), date.getMinutes());
+            case 0: item.date = new Date(date.getFullYear(), date.getMonth(), date.getDate(), (date.getHours() - 3), date.getMinutes());
+            item.month = this.months[item.date.getMonth()];
             break; 
-            case 1: item.time = new Date(date.getFullYear(), date.getMonth(), date.getDate(), (date.getHours() - 8), date.getMinutes());
+            case 1: item.date = new Date(date.getFullYear(), date.getMonth(), date.getDate(), (date.getHours() - 8), date.getMinutes());
+            item.month = this.months[item.date.getMonth()];
             break;
-            case 2: item.time = new Date(date.getFullYear(), date.getMonth(), date.getDate(), (date.getHours() + 6), date.getMinutes());
+            case 2: item.date = new Date(date.getFullYear(), date.getMonth(), date.getDate(), (date.getHours() + 6), date.getMinutes());
+            item.month = this.months[item.date.getMonth()];
             break;
-            case 3: item.time = new Date(date.getFullYear(), date.getMonth(), date.getDate(), (date.getHours() - 2), date.getMinutes());
+            case 3: item.date = new Date(date.getFullYear(), date.getMonth(), date.getDate(), (date.getHours() - 2), date.getMinutes());
+            item.month = this.months[item.date.getMonth()];
             break;
           }
         });
 
-        this.currentMonth = this.months[month];
       }
     }, 
-    currentWeather: function(){
+    getAdditionalWeather: function(){
       for (let item of this.otherCities){
 
         let geoUrl = new URL(`http://api.openweathermap.org/geo/1.0/direct?q=${item.name}&appid=8a6ebc47b8a6d70277b0d88e2983cdbc`);
@@ -240,6 +243,7 @@ export default {
                   item.path = require('@/assets/free-icon-snowy-1163629.png');
                   break;
                 }
+
                 item.weather = `${Math.round(result.main.temp)}`;
                 item.weatherCond = result.weather[0].description[0].toUpperCase() + result.weather[0].description.slice(1);
               }
@@ -342,8 +346,8 @@ export default {
 
               this.sunrise = new Date(result.sys.sunrise * 1000);
               this.sunset = new Date(result.sys.sunset * 1000);
-              this.dateText(this.sunrise);
-              this.dateText(this.sunset);
+              this.getDateText(this.sunrise);
+              this.getDateText(this.sunset);
 
               this.pressure = result.main.pressure;
               this.humidity = result.main.humidity;
@@ -365,10 +369,10 @@ export default {
   beforeMount(){
 
     this.getMainWeather();
-    this.currentWeather();
-    this.dateText(new Date());
-    setInterval(() => this.dateText(new Date()), 1000);
-    setInterval(() => this.currentWeather(), 60000);
+    this.getAdditionalWeather();
+    this.getDateText( new Date() );
+    setInterval(() => this.getDateText( new Date() ), 1000);
+    setInterval(() => this.getAdditionalWeather(), 60000);
     setInterval(() => this.getMainWeather(), 60000);
 
   },
