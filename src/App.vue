@@ -88,6 +88,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 import HeaderComp from './components/HeaderComp.vue';
 import FooterComp from './components/FooterComp.vue';
 
@@ -153,7 +155,7 @@ export default {
       this.name = city;
       this.getMainWeather();
     },
-    getDateText: function(date){
+    getDateInfo: function(date){
 
       if (date == this.sunset){
 
@@ -171,210 +173,178 @@ export default {
 
         this.otherCities.forEach((item, i) => {
           switch(i) {
-            case 0: item.date = new Date(date.getFullYear(), date.getMonth(), date.getDate(), (date.getHours() - 3), date.getMinutes());
-            item.month = this.months[item.date.getMonth()];
-            break; 
-            case 1: item.date = new Date(date.getFullYear(), date.getMonth(), date.getDate(), (date.getHours() - 8), date.getMinutes());
-            item.month = this.months[item.date.getMonth()];
-            break;
-            case 2: item.date = new Date(date.getFullYear(), date.getMonth(), date.getDate(), (date.getHours() + 6), date.getMinutes());
-            item.month = this.months[item.date.getMonth()];
-            break;
-            case 3: item.date = new Date(date.getFullYear(), date.getMonth(), date.getDate(), (date.getHours() - 2), date.getMinutes());
-            item.month = this.months[item.date.getMonth()];
-            break;
+            case 0: 
+              item.date = new Date(date.getFullYear(), date.getMonth(), date.getDate(), (date.getHours() - 3), date.getMinutes());
+              item.month = this.months[item.date.getMonth()];
+              break; 
+            case 1: 
+              item.date = new Date(date.getFullYear(), date.getMonth(), date.getDate(), (date.getHours() - 8), date.getMinutes());
+              item.month = this.months[item.date.getMonth()];
+              break;
+            case 2: 
+              item.date = new Date(date.getFullYear(), date.getMonth(), date.getDate(), (date.getHours() + 6), date.getMinutes());
+              item.month = this.months[item.date.getMonth()];
+              break;
+            case 3: 
+              item.date = new Date(date.getFullYear(), date.getMonth(), date.getDate(), (date.getHours() - 2), date.getMinutes());
+              item.month = this.months[item.date.getMonth()];
+              break;
           }
         });
 
       }
     }, 
-    getAdditionalWeather: function(){
+    async getAdditionalWeather(){
       for (let item of this.otherCities){
 
         let geoUrl = new URL(`http://api.openweathermap.org/geo/1.0/direct?q=${item.name}&appid=8a6ebc47b8a6d70277b0d88e2983cdbc`);
 
-        fetch(geoUrl)
-        .then(
-          response => {
-            return response.json();
-          }
-        )
-        .then(
-          result => {
-            let lat = result[0].lat;
-            let lon = result[0].lon;
-            let weatherUrl = new URL(`http://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&lang=ru&units=metric&appid=8a6ebc47b8a6d70277b0d88e2983cdbc`);
+        let result = await axios.get(geoUrl);
 
-            
-            fetch(weatherUrl)
-            .then(
-              response => {
-                return response.json();
-              }
-            )
-            .then(
-              result => {
-                switch(result.weather[0].description){
-                  case 'пасмурно': item.path = require('@/assets/free-icon-cloud-1163624.png');
-                  break;
-                  case 'переменная облачность': item.path = require('@/assets/free-icon-cloudy-1163634.png');
-                  break;
-                  case 'облачно с прояснениями':
-                  case 'небольшая облачность': 
-                  item.path = require('@/assets/free-icon-cloudy-1163661.png');
-                  break;
-                  case 'ясно': item.path = require('@/assets/free-icon-sun-1163662.png');
-                  break;
-                  case 'небольшой дождь': 
-                  case 'небольшая морось':
-                  case 'небольшой проливной дождь':
-                  item.path = require('@/assets/free-icon-cloudy-1163657.png');
-                  break;
-                  case 'дождь': item.path = require('@/assets/free-icon-rainy-1163626.png');
-                  break;
-                  case 'мгла': 
-                  case 'туман': 
-                  case 'дымка':
-                  case 'плотный туман':
-                  item.path = require('@/assets/free-icon-foog-1163640.png');
-                  break;
-                  case 'снег':
-                  case 'небольшой снег':
-                  item.path = require('@/assets/free-icon-snowy-1163629.png');
-                  break;
-                }
+        let weatherUrl = new URL(`http://api.openweathermap.org/data/2.5/weather?lat=${result.data[0].lat}&lon=${result.data[0].lon}&lang=ru&units=metric&appid=8a6ebc47b8a6d70277b0d88e2983cdbc`);
 
-                item.weather = `${Math.round(result.main.temp)}`;
-                item.weatherCond = result.weather[0].description[0].toUpperCase() + result.weather[0].description.slice(1);
-              }
-            )
-            .catch(
-              e => {
-                console.log(`Произошла ошибка ${e.message}`);
-              }
-            )
-          }
-        );
+        let finalResult = await axios.get(weatherUrl);
+
+        switch(finalResult.data.weather[0].description){
+          case 'пасмурно': 
+            item.path = require('@/assets/free-icon-cloud-1163624.png');
+            break;
+          case 'переменная облачность': 
+            item.path = require('@/assets/free-icon-cloudy-1163634.png');
+            break;
+          case 'облачно с прояснениями':
+          case 'небольшая облачность': 
+            item.path = require('@/assets/free-icon-cloudy-1163661.png');
+            break;
+          case 'ясно': 
+            item.path = require('@/assets/free-icon-sun-1163662.png');
+            break;
+          case 'небольшой дождь': 
+          case 'небольшая морось':
+          case 'небольшой проливной дождь':
+            item.path = require('@/assets/free-icon-cloudy-1163657.png');
+            break;
+          case 'дождь': 
+            item.path = require('@/assets/free-icon-rainy-1163626.png');
+            break;
+          case 'мгла': 
+          case 'туман': 
+          case 'дымка':
+          case 'плотный туман':
+            item.path = require('@/assets/free-icon-foog-1163640.png');
+            break;
+          case 'снег':
+          case 'небольшой снег':
+            item.path = require('@/assets/free-icon-snowy-1163629.png');
+            break;
+        }
+
+        item.weather = `${Math.round(finalResult.data.main.temp)}`;
+        item.weatherCond = finalResult.data.weather[0].description[0].toUpperCase() + finalResult.data.weather[0].description.slice(1);
+      
       }
     },
-    getMainWeather: function(){
+    async getMainWeather(){
 
       let geoUrl = new URL(`http://api.openweathermap.org/geo/1.0/direct?q=${this.name}&appid=8a6ebc47b8a6d70277b0d88e2983cdbc`);
 
-      fetch(geoUrl)
-      .then(
-        response => {
-          return response.json();
-        }
-      )
-      .then(
-        result => {
+      let result = await axios.get(geoUrl);
+
+      let weatherUrl = new URL(`http://api.openweathermap.org/data/2.5/weather?lat=${result.data[0].lat}&lon=${result.data[0].lon}&lang=ru&units=metric&appid=8a6ebc47b8a6d70277b0d88e2983cdbc`);
       
-          let lat = result[0].lat;
-          let lon = result[0].lon;
-          let weatherUrl = new URL(`http://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&lang=ru&units=metric&appid=8a6ebc47b8a6d70277b0d88e2983cdbc`);
+      let finalResult = await axios.get(weatherUrl);
+          
+      switch(finalResult.data.weather[0].description){
+        case 'пасмурно': 
+          this.path = require('@/assets/free-icon-cloud-1163624.png');
+          break;
+        case 'переменная облачность': 
+          this.path = require('@/assets/free-icon-cloudy-1163634.png');
+          break;
+        case 'облачно с прояснениями':
+        case 'небольшая облачность': 
+          this.path = require('@/assets/free-icon-cloudy-1163661.png');
+          break;
+        case 'ясно': 
+          this.path = require('@/assets/free-icon-sun-1163662.png');
+          break;
+        case 'небольшой дождь': 
+        case 'небольшая морось':
+        case 'небольшой проливной дождь':
+          this.path = require('@/assets/free-icon-cloudy-1163657.png');
+          break;
+        case 'дождь': 
+          this.path = require('@/assets/free-icon-rainy-1163626.png');
+          break;
+        case 'мгла': 
+        case 'туман':  
+        case 'дымка':
+        case 'плотный туман':
+          this.path = require('@/assets/free-icon-foog-1163640.png');
+          break;
+        case 'снег':
+        case 'небольшой снег':
+          this.path = require('@/assets/free-icon-snowy-1163629.png');
+          break;
+      }
 
-          fetch(weatherUrl)
-          .then(
-            response => {
-              return response.json();
-            }
-          )
-          .then(
-            result => {
-              switch(result.weather[0].description){
-                case 'пасмурно': this.path = require('@/assets/free-icon-cloud-1163624.png');
-                break;
-                case 'переменная облачность': this.path = require('@/assets/free-icon-cloudy-1163634.png');
-                break;
-                case 'облачно с прояснениями':
-                case 'небольшая облачность': 
-                this.path = require('@/assets/free-icon-cloudy-1163661.png');
-                break;
-                case 'ясно': this.path = require('@/assets/free-icon-sun-1163662.png');
-                break;
-                case 'небольшой дождь': 
-                case 'небольшая морось':
-                case 'небольшой проливной дождь':
-                this.path = require('@/assets/free-icon-cloudy-1163657.png');
-                break;
-                case 'дождь': this.path = require('@/assets/free-icon-rainy-1163626.png');
-                break;
-                case 'мгла': 
-                case 'туман':  
-                case 'дымка':
-                case 'плотный туман':
-                this.path = require('@/assets/free-icon-foog-1163640.png');
-                break;
-                case 'снег':
-                case 'небольшой снег':
-                this.path = require('@/assets/free-icon-snowy-1163629.png');
-                break;
-              }
-              if (result.wind.deg >= 350 && result.wind.deg <= 10){
+      if (finalResult.data.wind.deg >= 350 && finalResult.data.wind.deg <= 10){
 
-                this.weatherRoute = 'С';
+        this.weatherRoute = 'С';
+      } else if (finalResult.data.wind.deg > 10 && finalResult.data.wind.deg < 80) {
 
-              } else if (result.wind.deg > 10 && result.wind.deg < 80) {
+        this.weatherRoute = 'СВ';
+      } else if (finalResult.data.wind.deg >= 80 && finalResult.data.wind.deg <= 100){
 
-                this.weatherRoute = 'СВ';
+        this.weatherRoute = 'В';
+      } else if (finalResult.data.wind.deg > 100 && finalResult.data.wind.deg < 170){
 
-              } else if (result.wind.deg >= 80 && result.wind.deg <= 100){
+        this.weatherRoute = 'ЮВ';
+      } else if (finalResult.data.wind.deg >= 170 && finalResult.data.wind.deg <= 190){
 
-                this.weatherRoute = 'В';
+        this.weatherRoute = 'Ю';
+      } else if (finalResult.data.wind.deg > 190 && finalResult.data.wind.deg < 260){
 
-              } else if (result.wind.deg > 100 && result.wind.deg < 170){
+        this.weatherRoute = 'ЮЗ';
+      } else if (finalResult.data.wind.deg >= 260 && finalResult.data.wind.deg <= 280){
 
-                this.weatherRoute = 'ЮВ';
+        this.weatherRoute = 'З';
+      } else if (finalResult.data.wind.deg > 280 && finalResult.data.wind.deg < 350){
 
-              } else if (result.wind.deg >= 170 && result.wind.deg <= 190){
+        this.weatherRoute = 'СЗ';
+      }
 
-                this.weatherRoute = 'Ю';
+      this.sunrise = new Date(finalResult.data.sys.sunrise * 1000);
+      this.sunset = new Date(finalResult.data.sys.sunset * 1000);
+      this.getDateInfo(this.sunrise);
+      this.getDateInfo(this.sunset);
 
-              } else if (result.wind.deg > 190 && result.wind.deg < 260){
+      this.pressure = finalResult.data.main.pressure;
+      this.humidity = finalResult.data.main.humidity;
 
-                this.weatherRoute = 'ЮЗ';
+      this.weatherMax = finalResult.data.main.temp_max;
+      this.weatherMin = finalResult.data.main.temp_min;
 
-              } else if (result.wind.deg >= 260 && result.wind.deg <= 280){
+      this.weatherSpeed = Math.round(finalResult.data.wind.speed);
 
-                this.weatherRoute = 'З';
-
-              } else if (result.wind.deg > 280 && result.wind.deg < 350){
-
-                this.weatherRoute = 'СЗ';
-              }
-
-              this.sunrise = new Date(result.sys.sunrise * 1000);
-              this.sunset = new Date(result.sys.sunset * 1000);
-              this.getDateText(this.sunrise);
-              this.getDateText(this.sunset);
-
-              this.pressure = result.main.pressure;
-              this.humidity = result.main.humidity;
-
-              this.weatherMax = result.main.temp_max;
-              this.weatherMin = result.main.temp_min;
-
-              this.weatherSpeed = Math.round(result.wind.speed);
-
-              this.weather = Math.round(result.main.temp);
-              this.weatherCond = `  ${result.weather[0].description[0].toUpperCase() + result.weather[0].description.slice(1)}`;
-              this.realWeather = Math.round(result.main.feels_like);
-            }
-          )
-        }
-      );
-    },
+      this.weather = Math.round(finalResult.data.main.temp);
+      this.weatherCond = `  ${finalResult.data.weather[0].description[0].toUpperCase() + finalResult.data.weather[0].description.slice(1)}`;
+      this.realWeather = Math.round(finalResult.data.main.feels_like);
+    }
   },
   beforeMount(){
 
     this.getMainWeather();
     this.getAdditionalWeather();
-    this.getDateText( new Date() );
-    setInterval(() => this.getDateText( new Date() ), 1000);
+    this.getDateInfo( new Date() );
+
+    setInterval(() => this.getDateInfo( new Date() ), 1000);
     setInterval(() => this.getAdditionalWeather(), 60000);
     setInterval(() => this.getMainWeather(), 60000);
 
+  },
+  mounted(){
+    
   },
   components: {
     HeaderComp,
@@ -483,7 +453,7 @@ export default {
           justify-content: space-between;
           flex-wrap: wrap;
           width: 90%;
-          height: 30vh;
+          height: 35vh;
           .weatherB {
             display: flex;
             width: 47.5%;
@@ -532,7 +502,7 @@ export default {
           #weatherBlockInfoAir {
             align-items: center;
             flex-wrap: wrap;
-            height: 50%;
+            height: 47.5%;
             span {
               display: flex;
               align-items: center;
@@ -552,7 +522,7 @@ export default {
           #weatherBlockInfoTemp {
             align-items: center;
             flex-wrap: wrap;
-            height: 50%;
+            height: 47.5%;
             span {
               display: flex;
               align-items: center;
