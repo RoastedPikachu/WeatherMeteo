@@ -1,19 +1,20 @@
 <template>
-  <HeaderComp @search="whatCity"/>
+  <HeaderComp @search="getWeatherByCityName"/>
 
   <section>
     <div id="weatherBlock">
       <h3>Погода в вашем городе:</h3>
 
       <div id="weatherBlockInfo">
+        <img :src="mainBgImage" id="weatherBlockInfoBgImage" alt="Задний фон">
         <div id="weatherBlockMainInfo">
-          <img :src="path">
+          <img :src="imagePath">
           <span>
-            <p>{{ name }}</p>
+            <p>{{ mainCityName }}</p>
             <p>Сейчас {{ day }} {{ month }}, {{ time }}</p>
-            <p>{{ weather }}&#176;</p>
-            <p>Ощущается как {{ realWeather }}&#176;</p>
-            <p>{{ weatherCond }}</p>
+            <p>{{ mainTemperature }}&#176;</p>
+            <p>Ощущается как {{ realMainTemperature }}&#176;</p>
+            <p>  {{ weatherCond }}</p>
           </span> 
         </div>
 
@@ -43,7 +44,7 @@
           <div id="weatherBlockInfoAir" class="weatherB">
             <span>
               <img src="@/assets/free-icon-humidity-1163648.png" alt="Влажность воздуха">
-              <p>Влажность воздуха {{ humidity }}%</p>
+              <p>Влажность воздуха {{ humidity - 5 }}%</p>
             </span>
             <span>
               <img src="@/assets/free-icon-warm-1163666.png" alt="Атмосферное давление">
@@ -71,11 +72,11 @@
       <div>
         <ul>
           <li v-for="(item, index) in otherCities" :key="index">
-            <img :src="item.path">
+            <img :src="item.imagePath">
             <span>
               <p>{{ item.name }}</p>
               <p>Сейчас {{ item.date.toString().slice(9, 10) }} {{ item.month }}, {{ item.date.toString().slice(16, 21) }}</p> 
-              <p>{{ item.weather }}&#176;</p>
+              <p>{{ item.temperature }}&#176;</p>
               <p>{{ item.weatherCond }}</p>
             </span>
           </li>
@@ -99,41 +100,42 @@ export default {
     return {
       otherCities: [{
         name: 'Лондон', 
-        weather: '', 
+        temperature: '', 
         weatherCond: '', 
-        path: '',
+        imagePath: '',
         date: 0,
         month: '',
       }, 
       {
         name: 'Нью-Йорк', 
-        weather: '', 
+        temperature: '', 
         weatherCond: '', 
-        path: '',
+        imagePath: '',
         date: 0,
         month: '',
       }, 
       {
         name: 'Токио',
-        weather: '', 
+        temperature: '', 
         weatherCond: '', 
-        path: '',
+        imagePath: '',
         date: 0,
         month: '',
       }, 
       {
         name: 'Будапешт', 
-        weather: '', 
+        temperature: '', 
         weatherCond: '', 
-        path: '',
+        imagePath: '',
         date: 0,
         month: '',
       }],
       months: ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'],
-      name: 'Москва',
-      path: '',
-      weather: 0,
-      realWeather: 0,
+      mainCityName: 'Москва',
+      mainBgImage: '',
+      imagePath: '',
+      mainTemperature: 0,
+      realMainTemperature: 0,
       weatherMax: 0,
       weatherMin: 0,
       weatherCond: '',
@@ -151,20 +153,18 @@ export default {
     }
   },    
   methods: {
-    whatCity(city){
-      this.name = city;
+    getWeatherByCityName(cityName){
+      this.mainCityName = cityName;
       this.getMainWeather();
     },
-    getDateInfo: function(date){
+    getDateInfo(date){
 
       if (date == this.sunset){
 
         this.sunsetTime = date.toString().slice(16, 21);
-        
       } else if (date == this.sunrise){ 
         
         this.sunriseTime = date.toString().slice(16, 21);
-
       } else {
 
         this.day = date.getDate();
@@ -207,46 +207,46 @@ export default {
 
         switch(finalResult.data.weather[0].description){
           case 'пасмурно': 
-            item.path = require('@/assets/free-icon-cloud-1163624.png');
+            item.imagePath = require('@/assets/free-icon-cloud-1163624.png');
             break;
           case 'переменная облачность': 
-            item.path = require('@/assets/free-icon-cloudy-1163634.png');
+            item.imagePath = require('@/assets/free-icon-cloudy-1163634.png');
             break;
           case 'облачно с прояснениями':
           case 'небольшая облачность': 
-            item.path = require('@/assets/free-icon-cloudy-1163661.png');
+            item.imagePath = require('@/assets/free-icon-cloudy-1163661.png');
             break;
           case 'ясно': 
-            item.path = require('@/assets/free-icon-sun-1163662.png');
+            item.imagePath = require('@/assets/free-icon-sun-1163662.png');
             break;
           case 'небольшой дождь': 
           case 'небольшая морось':
           case 'небольшой проливной дождь':
-            item.path = require('@/assets/free-icon-cloudy-1163657.png');
+            item.imagePath = require('@/assets/free-icon-cloudy-1163657.png');
             break;
           case 'дождь': 
-            item.path = require('@/assets/free-icon-rainy-1163626.png');
+            item.imagePath = require('@/assets/free-icon-rainy-1163626.png');
             break;
           case 'мгла': 
           case 'туман': 
           case 'дымка':
           case 'плотный туман':
-            item.path = require('@/assets/free-icon-foog-1163640.png');
+            item.imagePath = require('@/assets/free-icon-foog-1163640.png');
             break;
           case 'снег':
           case 'небольшой снег':
-            item.path = require('@/assets/free-icon-snowy-1163629.png');
+            item.imagePath = require('@/assets/free-icon-snowy-1163629.png');
             break;
         }
 
-        item.weather = `${Math.round(finalResult.data.main.temp)}`;
+        item.temperature = `${Math.round(finalResult.data.main.temp)}`;
         item.weatherCond = finalResult.data.weather[0].description[0].toUpperCase() + finalResult.data.weather[0].description.slice(1);
       
       }
     },
     async getMainWeather(){
 
-      let geoUrl = new URL(`http://api.openweathermap.org/geo/1.0/direct?q=${this.name}&appid=8a6ebc47b8a6d70277b0d88e2983cdbc`);
+      let geoUrl = new URL(`http://api.openweathermap.org/geo/1.0/direct?q=${this.mainCityName}&appid=8a6ebc47b8a6d70277b0d88e2983cdbc`);
 
       let result = await axios.get(geoUrl);
 
@@ -256,35 +256,43 @@ export default {
           
       switch(finalResult.data.weather[0].description){
         case 'пасмурно': 
-          this.path = require('@/assets/free-icon-cloud-1163624.png');
+          this.imagePath = require('@/assets/free-icon-cloud-1163624.png');
+          this.mainBgImage = require('@/assets/mainlyCloudy.png');
           break;
         case 'переменная облачность': 
-          this.path = require('@/assets/free-icon-cloudy-1163634.png');
+          this.imagePath = require('@/assets/free-icon-cloudy-1163634.png');
+          this.mainBgImage = require('@/assets/cloudy.png');
           break;
         case 'облачно с прояснениями':
-        case 'небольшая облачность': 
-          this.path = require('@/assets/free-icon-cloudy-1163661.png');
+        case 'небольшая облачность':  
+          this.imagePath = require('@/assets/free-icon-cloudy-1163661.png');
+          this.mainBgImage = require('@/assets/cloudy.png');
           break;
         case 'ясно': 
-          this.path = require('@/assets/free-icon-sun-1163662.png');
+          this.imagePath = require('@/assets/free-icon-sun-1163662.png');
+          this.mainBgImage = require('@/assets/sunny.png');
           break;
         case 'небольшой дождь': 
         case 'небольшая морось':
         case 'небольшой проливной дождь':
-          this.path = require('@/assets/free-icon-cloudy-1163657.png');
+          this.imagePath = require('@/assets/free-icon-cloudy-1163657.png');
+          this.mainBgImage = require('@/assets/rainy.png');
           break;
         case 'дождь': 
-          this.path = require('@/assets/free-icon-rainy-1163626.png');
+          this.imagePath = require('@/assets/free-icon-rainy-1163626.png');
+          this.mainBgImage = require('@/assets/strongRainy.png');
           break;
         case 'мгла': 
         case 'туман':  
         case 'дымка':
         case 'плотный туман':
-          this.path = require('@/assets/free-icon-foog-1163640.png');
+          this.imagePath = require('@/assets/free-icon-foog-1163640.png');
+          this.mainBgImage = require('@/assets/fog.png');
           break;
         case 'снег':
         case 'небольшой снег':
-          this.path = require('@/assets/free-icon-snowy-1163629.png');
+          this.imagePath = require('@/assets/free-icon-snowy-1163629.png');
+          this.mainBgImage = require('@/assets/snowfall.png');
           break;
       }
 
@@ -327,9 +335,9 @@ export default {
 
       this.weatherSpeed = Math.round(finalResult.data.wind.speed);
 
-      this.weather = Math.round(finalResult.data.main.temp);
-      this.weatherCond = `  ${finalResult.data.weather[0].description[0].toUpperCase() + finalResult.data.weather[0].description.slice(1)}`;
-      this.realWeather = Math.round(finalResult.data.main.feels_like);
+      this.mainTemperature = Math.round(finalResult.data.main.temp);
+      this.weatherCond = `${finalResult.data.weather[0].description[0].toUpperCase() + finalResult.data.weather[0].description.slice(1)}`;
+      this.realMainTemperature = Math.round(finalResult.data.main.feels_like);
     }
   },
   beforeMount(){
@@ -342,9 +350,6 @@ export default {
     setInterval(() => this.getAdditionalWeather(), 60000);
     setInterval(() => this.getMainWeather(), 60000);
 
-  },
-  mounted(){
-    
   },
   components: {
     HeaderComp,
@@ -391,6 +396,7 @@ export default {
         font-size: $font-size-h3;
       }
       #weatherBlockInfo {
+        position: relative;
         display: flex;
         justify-content: center;
         align-items: flex-start;
@@ -398,10 +404,13 @@ export default {
         width: 100%;
         min-height: 90%;
         height: auto;
-        border-radius: 10px;
-        background-image: url('assets/oblachnost.png');
-        background-size: cover;
-        background-repeat: no-repeat;
+        #weatherBlockInfoBgImage {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          border-radius: 10px;
+          z-index: -1;
+        }
         #weatherBlockMainInfo {
           display: flex;
           justify-content: flex-start;
