@@ -11,7 +11,7 @@
           <img :src="imagePath">
           <span>
             <p>{{ mainCityName }}</p>
-            <p>Сейчас {{ day }} {{ month }}, {{ time }}</p>
+            <p>Сейчас {{ date.getDate() }} {{ month }}, {{ date.toString().slice(16, 21) }}</p>
             <p>{{ mainTemperature }}&#176;</p>
             <p>Ощущается как {{ realMainTemperature }}&#176;</p>
             <p>  {{ weatherCond }}</p>
@@ -75,7 +75,7 @@
             <img :src="item.imagePath">
             <span>
               <p>{{ item.name }}</p>
-              <p>Сейчас {{ item.date.toString().slice(9, 10) }} {{ item.month }}, {{ item.date.toString().slice(16, 21) }}</p> 
+              <p>Сейчас {{ item.date.getDate() }} {{ item.month }}, {{ item.date.toString().slice(16, 21) }}</p> 
               <p>{{ item.temperature }}&#176;</p>
               <p>{{ item.weatherCond }}</p>
             </span>
@@ -143,33 +143,38 @@ export default {
       weatherRoute: '',
       humidity: 0,
       pressure: 0,
-      time: 0,
       sunrise: 0,
       sunriseTime: 0,
       sunset: 0,
       sunsetTime: 0,
-      day: 0,
+      date: new Date(),
       month: 0,
+      timezone: 0,
     }
   },    
   methods: {
     getWeatherByCityName(cityName){
       this.mainCityName = cityName;
       this.getMainWeather();
+      this.getDateInfo(this.date);
     },
     getDateInfo(date){
 
       if (date == this.sunset){
 
         this.sunsetTime = date.toString().slice(16, 21);
+
       } else if (date == this.sunrise){ 
-        
+
         this.sunriseTime = date.toString().slice(16, 21);
+
       } else {
 
-        this.day = date.getDate();
-        this.month = this.months[date.getMonth()];
-        this.time = date.toString().slice(16, 21);
+        this.date = new Date(date.getFullYear(), date.getMonth(), date.getDate(), (date.getHours() + this.timezone), date.getMinutes());
+        this.day = this.date.getDate();  
+        this.month = this.months[this.date.getMonth()];
+
+        console.log(this.date);
 
         this.otherCities.forEach((item, i) => {
           switch(i) {
@@ -191,18 +196,15 @@ export default {
               break;
           }
         });
-
       }
     }, 
     async getAdditionalWeather(){
       for (let item of this.otherCities){
 
         let geoUrl = new URL(`http://api.openweathermap.org/geo/1.0/direct?q=${item.name}&appid=8a6ebc47b8a6d70277b0d88e2983cdbc`);
-
         let result = await axios.get(geoUrl);
 
         let weatherUrl = new URL(`http://api.openweathermap.org/data/2.5/weather?lat=${result.data[0].lat}&lon=${result.data[0].lon}&lang=ru&units=metric&appid=8a6ebc47b8a6d70277b0d88e2983cdbc`);
-
         let finalResult = await axios.get(weatherUrl);
 
         switch(finalResult.data.weather[0].description){
@@ -247,12 +249,11 @@ export default {
     async getMainWeather(){
 
       let geoUrl = new URL(`http://api.openweathermap.org/geo/1.0/direct?q=${this.mainCityName}&appid=8a6ebc47b8a6d70277b0d88e2983cdbc`);
-
       let result = await axios.get(geoUrl);
 
       let weatherUrl = new URL(`http://api.openweathermap.org/data/2.5/weather?lat=${result.data[0].lat}&lon=${result.data[0].lon}&lang=ru&units=metric&appid=8a6ebc47b8a6d70277b0d88e2983cdbc`);
-      
       let finalResult = await axios.get(weatherUrl);
+      this.timezone = (finalResult.data.timezone / 3600) - 3;
           
       switch(finalResult.data.weather[0].description){
         case 'пасмурно': 
@@ -299,24 +300,31 @@ export default {
       if (finalResult.data.wind.deg >= 350 && finalResult.data.wind.deg <= 10){
 
         this.weatherRoute = 'С';
+
       } else if (finalResult.data.wind.deg > 10 && finalResult.data.wind.deg < 80) {
 
         this.weatherRoute = 'СВ';
+
       } else if (finalResult.data.wind.deg >= 80 && finalResult.data.wind.deg <= 100){
 
         this.weatherRoute = 'В';
+
       } else if (finalResult.data.wind.deg > 100 && finalResult.data.wind.deg < 170){
 
         this.weatherRoute = 'ЮВ';
+
       } else if (finalResult.data.wind.deg >= 170 && finalResult.data.wind.deg <= 190){
 
         this.weatherRoute = 'Ю';
+
       } else if (finalResult.data.wind.deg > 190 && finalResult.data.wind.deg < 260){
 
         this.weatherRoute = 'ЮЗ';
+
       } else if (finalResult.data.wind.deg >= 260 && finalResult.data.wind.deg <= 280){
 
         this.weatherRoute = 'З';
+
       } else if (finalResult.data.wind.deg > 280 && finalResult.data.wind.deg < 350){
 
         this.weatherRoute = 'СЗ';
@@ -344,12 +352,11 @@ export default {
 
     this.getMainWeather();
     this.getAdditionalWeather();
-    this.getDateInfo( new Date() );
+    this.getDateInfo(new Date());
 
     setInterval(() => this.getDateInfo( new Date() ), 1000);
     setInterval(() => this.getAdditionalWeather(), 60000);
     setInterval(() => this.getMainWeather(), 60000);
-
   },
   components: {
     HeaderComp,
