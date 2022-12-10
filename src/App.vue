@@ -174,8 +174,6 @@ export default {
         this.day = this.date.getDate();  
         this.month = this.months[this.date.getMonth()];
 
-        console.log(this.date);
-
         this.otherCities.forEach((item, i) => {
           switch(i) {
             case 0: 
@@ -243,7 +241,6 @@ export default {
 
         item.temperature = `${Math.round(finalResult.data.main.temp)}`;
         item.weatherCond = finalResult.data.weather[0].description[0].toUpperCase() + finalResult.data.weather[0].description.slice(1);
-      
       }
     },
     async getMainWeather(){
@@ -627,7 +624,7 @@ export default {
     }
   }
 
-  @media (max-width: 450px) {
+  @media (max-width: 480px) {
     section {
       display: flex;
       justify-content: center;
@@ -700,7 +697,7 @@ export default {
       }
       #otherCities {
         width: 90%;
-        min-height: 780px;
+        min-height: 680px;
         margin-right: 0px;
         h3 {
           height: 5%;
@@ -710,13 +707,13 @@ export default {
           height: 95%;
           ul {
             li {
-              height: 160px;
+              min-height: 135px;
               img {
                 min-width: 70px;
               }
               span {
                 margin-left: 10px;
-                width: 60%;
+                width: 65%;
                 p:nth-child(3) {
                   width: 100%;
                 }

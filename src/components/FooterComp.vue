@@ -36,7 +36,7 @@ export default {
     }
   }
 
-  @media(max-width: 450px) {
+  @media(max-width: 480px) {
     footer {
       margin-top: 50px;
       font-family: 'Mono Sans', sans-serif;

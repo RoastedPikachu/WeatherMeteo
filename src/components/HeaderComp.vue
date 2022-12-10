@@ -2,7 +2,7 @@
   <header>
     <h2>WeatherMeteo</h2>
     <p>Прогноз погоды по всему миру</p>
-    <input type="text" placeholder="Введите город/посёлок" @keydown="isEnter($event)">
+    <input type="text" placeholder="Введите населённый пункт" @keydown="isEnter($event)">
   </header>
 </template>
 
@@ -57,7 +57,7 @@ export default {
     }
   }
 
-  @media(max-width: 450px) {
+  @media(max-width: 480px) {
     header {
       justify-content: center;
       flex-wrap: wrap;
