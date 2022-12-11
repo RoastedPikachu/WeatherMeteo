@@ -56,4 +56,14 @@ export default {
     }
   }
 
+  @media (min-width: 1800px) {
+    footer {
+      margin-top: 75px;
+      height: 70px;
+      p {
+        font-size: 28px;
+      }
+    }
+  }
+
 </style>

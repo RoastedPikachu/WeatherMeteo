@@ -199,10 +199,10 @@ export default {
     async getAdditionalWeather(){
       for (let item of this.otherCities){
 
-        let geoUrl = new URL(`http://api.openweathermap.org/geo/1.0/direct?q=${item.name}&appid=8a6ebc47b8a6d70277b0d88e2983cdbc`);
+        let geoUrl = new URL(`http://api.openweathermap.org/geo/1.0/direct?q=${item.name}&appid=e501ea42c4b27d0e850c08e7f65e6db3`);
         let result = await axios.get(geoUrl);
 
-        let weatherUrl = new URL(`http://api.openweathermap.org/data/2.5/weather?lat=${result.data[0].lat}&lon=${result.data[0].lon}&lang=ru&units=metric&appid=8a6ebc47b8a6d70277b0d88e2983cdbc`);
+        let weatherUrl = new URL(`http://api.openweathermap.org/data/2.5/weather?lat=${result.data[0].lat}&lon=${result.data[0].lon}&lang=ru&units=metric&appid=e501ea42c4b27d0e850c08e7f65e6db3`);
         let finalResult = await axios.get(weatherUrl);
 
         switch(finalResult.data.weather[0].description){
@@ -245,10 +245,10 @@ export default {
     },
     async getMainWeather(){
 
-      let geoUrl = new URL(`http://api.openweathermap.org/geo/1.0/direct?q=${this.mainCityName}&appid=8a6ebc47b8a6d70277b0d88e2983cdbc`);
+      let geoUrl = new URL(`http://api.openweathermap.org/geo/1.0/direct?q=${this.mainCityName}&appid=e501ea42c4b27d0e850c08e7f65e6db3`);
       let result = await axios.get(geoUrl);
 
-      let weatherUrl = new URL(`http://api.openweathermap.org/data/2.5/weather?lat=${result.data[0].lat}&lon=${result.data[0].lon}&lang=ru&units=metric&appid=8a6ebc47b8a6d70277b0d88e2983cdbc`);
+      let weatherUrl = new URL(`http://api.openweathermap.org/data/2.5/weather?lat=${result.data[0].lat}&lon=${result.data[0].lon}&lang=ru&units=metric&appid=e501ea42c4b27d0e850c08e7f65e6db3`);
       let finalResult = await axios.get(weatherUrl);
       this.timezone = (finalResult.data.timezone / 3600) - 3;
           
@@ -734,7 +734,126 @@ export default {
   }
 
   @media (min-width: 1800px) {
-    
+    section {
+      #weatherBlock {
+        margin-left: 5%;
+        h3 {
+          font-size: 34px;
+        }
+        #weatherBlockInfo {
+          height: 88%;
+          #weatherBlockMainInfo {
+            width: 85%;
+            img {
+              width: 12.5%;
+            }
+            span {
+              p:nth-child(1) {
+                font-size: 32px;
+              }
+              p:nth-child(2) {
+                font-size: 26px;
+              }
+              p:nth-child(3) {
+                font-size: 32px;
+              }           
+              p:nth-child(4) {
+                margin-top: 25px;
+                font-size: 26px;
+              }
+              p:nth-child(5) {
+                margin-top: 25px;
+                font-size: 26px;
+              }
+            }
+          }
+          #weatherBlockInfo-other {
+            width: 85%;
+            #weatherBlockInfoWind {
+             span {
+              img {
+                width: 12.5%;
+                height: 65%;
+              }
+              p {
+                font-size: 26px;
+              }
+             }
+            }
+            #weatherBlockInfoSun {
+              div {
+                img {
+                  width: 47.5%;
+                }
+                p {
+                  width: 100%;
+                  font-size: 24px;
+                  text-align: center;
+                }
+              }
+            }
+            #weatherBlockInfoAir {
+              span {
+                img {
+                  width: 15%;
+                }
+                p {
+                  font-size: 26px;
+                }
+              }
+            }
+            #weatherBlockInfoTemp {
+              span {
+                img {
+                  width: 15%;
+                }
+                p {
+                  font-size: 26px;  
+                }
+              }
+            }
+          }
+        }
+      }
+      #otherCities {
+        margin-right: 5%;
+        width: 25%;
+        height: 800px;
+        h3 {
+          font-size: 34px;
+        }
+        div {
+          ul {
+            li {
+              height: 150px;
+              img {
+                min-width: 115px;
+                height: 115px; 
+              }
+              span {
+                font-size: 28px;
+                p {
+                  width: 100%;
+                  height: auto;
+                }
+                p:nth-child(2){
+                  width: 100%;
+                  font-size: 22px;
+                }
+                p:nth-child(3){
+                  width: 40px;
+                  font-size: 28px;
+                }
+                p:nth-child(4){
+                  width: 80%;
+                  font-size: 22px;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   }
 
 </style>

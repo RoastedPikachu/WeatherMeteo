@@ -75,4 +75,25 @@ export default {
     }
   }
 
+  @media (min-width: 1800px) {
+    header {
+      height: 125px;
+      h2 {
+        margin-left: 5%;
+        font-size: 38px;
+      }
+      p {
+        margin-left: 5%;
+        width: auto;
+        font-size: 28px;
+      }
+      input {
+        margin-right: 5%;
+        width: 380px;
+        height: 50px;
+        font-size: 24px;
+      }
+    }
+  }
+
 </style>
